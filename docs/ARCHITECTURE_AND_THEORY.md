@@ -62,11 +62,11 @@ Theo bài giảng *Note 5 - Distributed Message Queue (Apache Kafka)*:
 - **Partition Pruning (`PartitionFilters`)**: Khi dữ liệu giao dịch được phân vùng vật lý theo thư mục `year=YYYY/month=MM/`, truy vấn lọc `WHERE year = 2025 AND month = 11` chỉ quét đúng thư mục `year=2025/month=11/` (giảm ~91.6% lượng tệp cần đọc ngay từ bước duyệt cây thư mục).
 - **Predicate Pushdown (`PushedFilters`) & Column Projection**: Chỉ đọc các *Column Chunks* xuất hiện trong câu lệnh `SELECT` và lọc sớm dựa trên thống kê `min/max` của Row Group.
 - **Cost-Based Optimizer (`spark.sql.cbo.enabled = true`)**: Tối ưu hóa thứ tự và chiến lược phép nối (*BroadcastHashJoin* khi nối bảng giao dịch >1M dòng với bảng danh mục `products_catalog` kích thước nhỏ).
-- 
+
 ### 4.2. Xử Lý Luồng Event-Time, Cửa Sổ Trượt & Watermarking
 - **Sliding Window (`window_duration = 1 minute`, `slide_duration = 10 seconds`)**: Mỗi 10 giây, hệ thống tính toán các chỉ số (`total_events`, `active_users`, `purchase_count`, `gross_sales`, `conversion_rate_pct`) trong khung thời gian 1 phút gần nhất dựa trên `event_timestamp` (thời điểm sự kiện thực sự xảy ra tại thiết bị người dùng, không phải *Processing Time* khi máy chủ nhận được).
 - **Watermarking (`10 minutes`)**:
   - Ngưỡng Watermark được xác định bằng:
     $$\text{Watermark}_t = \max(\text{event\_timestamp}) - 10\text{ minutes}$$
-  - Các sự kiện đến muộn (*Late Data*) nhưng có $\text{event\_timestamp} \ge \text{Watermark}_t$ vẫn được Spark chấp nhận và cập nhật chính xác vào cửa sổ tương ứng.
-  - Các sự kiện trễ quá 10 phút ($\text{event\_timestamp} < \text{Watermark}_t$) sẽ bị loại bỏ, đồng thời Spark giải phóng trạng thái của các cửa sổ cũ khỏi bộ nhớ (**State Store Cleanup**), ngăn chặn triệt để lỗi tràn bộ nhớ (`OutOfMemoryError`) khi chạy dịch vụ 24/7.
+  - Các sự kiện đến muộn (*Late Data*) nhưng có `event_timestamp` $\ge \text{Watermark}_t$ vẫn được Spark chấp nhận và cập nhật chính xác vào cửa sổ tương ứng.
+  - Các sự kiện trễ quá 10 phút (`event_timestamp` $< \text{Watermark}_t$) sẽ bị loại bỏ, đồng thời Spark giải phóng trạng thái của các cửa sổ cũ khỏi bộ nhớ (*State Store Cleanup*), ngăn chặn triệt để lỗi tràn bộ nhớ (`OutOfMemoryError`) khi chạy dịch vụ 24/7.
