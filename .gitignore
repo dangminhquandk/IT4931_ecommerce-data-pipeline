@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local data & checkpoints (keep serving_layer.db for instant Dashboard preview, ignore heavy generated raw/parquet files)
+data/raw/
+data/refined/
+data/partitioned/
+data/checkpoints/
+*.parquet
+*.snappy.parquet
+.pytest_cache/
+
+# Spark / Hadoop local artifacts
+spark-warehouse/
+metastore_db/
+derby.log
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment secrets
+.env
+

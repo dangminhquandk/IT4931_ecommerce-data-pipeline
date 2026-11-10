@@ -1,0 +1,11 @@
+[project]
+name = "it4931-ecommerce-data-pipeline"
+version = "1.0.0"
+description = "Real-Time E-Commerce Big Data Pipeline (HDFS, Parquet, Snappy, Spark Batch/Streaming, Kafka, PostgreSQL, Streamlit) - IT4931 Group 3"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+

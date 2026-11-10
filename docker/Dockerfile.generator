@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir kafka-python-ng==2.2.2 numpy==1.26.4 pandas==2.2.2
+
+COPY src /app/src
+
+ENV PYTHONPATH=/app
+
+CMD ["python", "-m", "src.ingestion.event_generator"]
+
