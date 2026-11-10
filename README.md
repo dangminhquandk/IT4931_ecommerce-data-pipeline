@@ -79,7 +79,9 @@ IT4931_ecommerce-data-pipeline/
 │   ├── Dockerfile.spark           # Container cho Apache Spark Master/Worker + JDBC/Kafka drivers
 │   └── Dockerfile.dashboard       # Container cho Streamlit Visualization Dashboard
 ├── docs/
-│   └── ARCHITECTURE_AND_THEORY.md # Tài liệu lý thuyết IT4931 (HDFS, Parquet, Kafka, Spark, Lambda)
+│   ├── BAO_CAO_CHI_TIET_DU_AN_IT4931.md # Báo cáo tổng hợp chi tiết: Lý thuyết, Công cụ, Code & Luồng hoạt động
+│   ├── ARCHITECTURE_AND_THEORY.md       # Chuyên khảo lý thuyết IT4931 (HDFS, Parquet, Kafka, Spark, Lambda)
+│   └── EXPERIMENTAL_REPORT.md           # Báo cáo kết quả thực nghiệm định lượng trên 1,050,000 bản ghi
 ├── notebooks/
 │   └── IT4931_Ecommerce_Analysis_and_Benchmark.ipynb # Notebook phân tích, MLlib RFM & Benchmark
 ├── scripts/

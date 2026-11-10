@@ -326,27 +326,43 @@ class BatchProcessor:
 
     @staticmethod
     def _label_rfm_segments(seg_df: pd.DataFrame) -> pd.DataFrame:
-        """Sort RFM clusters by average monetary spend descending and assign business tier labels."""
-        seg_sorted = seg_df.sort_values("avg_monetary_spend", ascending=False).reset_index(drop=True)
+        """
+        Assign business RFM tier labels based on cluster centroids:
+        - Highest recency (days since last order) -> 'At-Risk / Hibernating Users'
+        - Remaining 3 clusters sorted by monetary spend descending:
+          1. 'Champions (VIP High-Spend)'
+          2. 'Loyal Customers (Frequent)'
+          3. 'Potential / Promising Buyers'
+        """
+        df_copy = seg_df.copy().reset_index(drop=True)
+        total_rev = max(1.0, float(df_copy["total_seg_revenue"].sum()))
+
+        # Identify the cluster with highest avg_recency_days as At-Risk / Hibernating
+        at_risk_idx = int(df_copy["avg_recency_days"].idxmax())
+        active_clusters = df_copy.drop(index=at_risk_idx).sort_values(
+            "avg_monetary_spend", ascending=False
+        )
+        at_risk_cluster = df_copy.loc[[at_risk_idx]]
+
+        ordered = pd.concat([active_clusters, at_risk_cluster], ignore_index=True)
         tier_names = [
             "Champions (VIP High-Spend)",
             "Loyal Customers (Frequent)",
             "Potential / Promising Buyers",
             "At-Risk / Hibernating Users",
         ]
-        total_rev = max(1.0, float(seg_sorted["total_seg_revenue"].sum()))
-        seg_sorted["segment_id"] = range(1, len(seg_sorted) + 1)
-        seg_sorted["segment_name"] = [
+        ordered["segment_id"] = range(1, len(ordered) + 1)
+        ordered["segment_name"] = [
             tier_names[i] if i < len(tier_names) else f"Segment {i + 1}"
-            for i in range(len(seg_sorted))
+            for i in range(len(ordered))
         ]
-        seg_sorted["avg_recency_days"] = seg_sorted["avg_recency_days"].round(2)
-        seg_sorted["avg_frequency_orders"] = seg_sorted["avg_frequency_orders"].round(2)
-        seg_sorted["avg_monetary_spend"] = seg_sorted["avg_monetary_spend"].round(2)
-        seg_sorted["share_of_revenue_pct"] = (
-            seg_sorted["total_seg_revenue"] * 100.0 / total_rev
+        ordered["avg_recency_days"] = ordered["avg_recency_days"].round(2)
+        ordered["avg_frequency_orders"] = ordered["avg_frequency_orders"].round(2)
+        ordered["avg_monetary_spend"] = ordered["avg_monetary_spend"].round(2)
+        ordered["share_of_revenue_pct"] = (
+            ordered["total_seg_revenue"] * 100.0 / total_rev
         ).round(2)
-        return seg_sorted[
+        return ordered[
             [
                 "segment_id",
                 "segment_name",

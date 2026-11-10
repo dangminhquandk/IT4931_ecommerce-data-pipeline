@@ -156,6 +156,7 @@ services:
       - ./src:/app/src
       - ./scripts:/app/scripts
       - ./data:/app/data
+      - ./data:/data
     networks:
       - ecommerce-bigdata-net
 
@@ -185,6 +186,7 @@ services:
       - ./src:/app/src
       - ./scripts:/app/scripts
       - ./data:/app/data
+      - ./data:/data
     networks:
       - ecommerce-bigdata-net
 

@@ -154,7 +154,7 @@ class ClickstreamStreamProcessor:
                 "purchase_count",
                 "gross_sales",
                 F.round(
-                    F.col("purchase_count") * 100.0 / F. greatest(F.lit(1), F.col("view_count")),
+                    F.col("purchase_count") * 100.0 / F.greatest(F.lit(1), F.col("view_count")),
                     2,
                 ).alias("conversion_rate_pct"),
                 "late_events_accepted",

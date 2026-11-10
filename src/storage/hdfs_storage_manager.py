@@ -277,6 +277,12 @@ class HDFSStorageManager:
         clean_df["year"] = clean_df["event_ts"].dt.year.astype("int32")
         clean_df["month"] = clean_df["event_ts"].dt.month.astype("int32")
 
+        # Sort by Category & Price within year/month so Parquet Row Group min/max statistics
+        # enable high-efficiency Predicate Pushdown & Dictionary/RLE compression (Note 3 Slide 43)
+        clean_df = clean_df.sort_values(
+            ["year", "month", "Category", "Price"], ascending=[True, True, True, True]
+        ).reset_index(drop=True)
+
         # 2. Write Refined Unpartitioned Parquet (Snappy compression, Dictionary encoding)
         refined_unpart_dir = base_data_dir / "refined" / "transactions_parquet_unpartitioned"
         refined_unpart_dir.mkdir(parents=True, exist_ok=True)
