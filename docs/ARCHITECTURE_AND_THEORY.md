@@ -67,6 +67,6 @@ Theo bài giảng *Note 5 - Distributed Message Queue (Apache Kafka)*:
 - **Sliding Window (`window_duration = 1 minute`, `slide_duration = 10 seconds`)**: Mỗi 10 giây, hệ thống tính toán các chỉ số (`total_events`, `active_users`, `purchase_count`, `gross_sales`, `conversion_rate_pct`) trong khung thời gian 1 phút gần nhất dựa trên `event_timestamp` (thời điểm sự kiện thực sự xảy ra tại thiết bị người dùng, không phải *Processing Time* khi máy chủ nhận được).
 - **Watermarking (`10 minutes`)**:
   - Ngưỡng Watermark được xác định bằng:
-    $$\text{Watermark}_t = \max(\text{event\textunderscore timestamp}) - 10\text{ minutes}$$
+    $$\text{Watermark}_t = \max(\mathtt{event\_timestamp}) - 10\text{ minutes}$$
   - Các sự kiện đến muộn (*Late Data*) nhưng có `event_timestamp` $\ge \text{Watermark}_t$ vẫn được Spark chấp nhận và cập nhật chính xác vào cửa sổ tương ứng.
   - Các sự kiện trễ quá 10 phút (`event_timestamp` $< \text{Watermark}_t$) sẽ bị loại bỏ, đồng thời Spark giải phóng trạng thái của các cửa sổ cũ khỏi bộ nhớ (*State Store Cleanup*), ngăn chặn triệt để lỗi tràn bộ nhớ (`OutOfMemoryError`) khi chạy dịch vụ 24/7.
